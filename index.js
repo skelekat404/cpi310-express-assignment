@@ -1,8 +1,25 @@
 //this is basically importing express ******
-const express = require('express');
-const express_handle = require('express-handlebars');
+//const express = require('express');
+import express from 'express';
+//const express_handle = require('express-handlebars');
+import express_handle from 'express-handlebars';
+
+import sqlite3 from 'sqlite3';
+import {open} from 'sqlite';
+const dbPromise = open({
+    filename: 'data.db',
+    driver: sqlite3.Database,
+});
+//named import
+//import sayHello from './otherfile';
+//sayHello();
+// const otherFile = require('./otherfile');
+// otherFile.sayHello();
 
 const app = express();
+
+let messages = [];
+
 app.engine('handlebars', express_handle());
 app.set('view engine', 'handlebars');
 //get, post, put, delete
@@ -20,13 +37,15 @@ app.get("/", (req, res) => {
     //response sending hello world 
     //res.send("<h1>hello world!</h1>");
     res.render("home", {
-        name: "morgan"
+        messages: messages
     });
 });
 
-app.post('/greet', (req, res) => {
+app.post('/message', (req, res) => {
+    messages.push(req.body.message);
     //console.log('request body', req.body);
-    res.render('greet', {name: req.body.name});
+    //res.render('greet', {name: req.body.name});
+    res.redirect('/');
 });
 
 app.listen(port, () => {
